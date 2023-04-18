@@ -1,0 +1,25 @@
+.wrapper {
+  margin: 90px 40px;
+}
+.title {
+  /* margin-top: 90px; */
+}
+.wrap_select {
+}
+.select {
+  float: left;
+  width: 200px;
+}
+.wrap_data_user {
+}
+.data_user {
+  height: 500px !important;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+}
+.title_nodata {
+  padding: 16px;
+  color: rgba(0, 0, 0, 0.25);
+  font-size: 14px;
+  text-align: center;
+}
