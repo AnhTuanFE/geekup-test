@@ -11,6 +11,8 @@
 
 .header {
   background-color: white !important;
+  /* background-color: aqua !important; */
+
   margin-inline: 16px;
   height: 56px;
   line-height: 56px;

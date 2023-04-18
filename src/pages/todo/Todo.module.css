@@ -1,8 +1,7 @@
 .wrapper {
-  margin: 90px 40px;
+  margin: 100px 40px;
 }
 .title {
-  /* margin-top: 90px; */
 }
 .wrap_select {
 }
@@ -16,10 +15,37 @@
   height: 500px !important;
   border: 1px solid #d9d9d9;
   border-radius: 8px;
+  overflow-y: scroll;
 }
 .title_nodata {
   padding: 16px;
   color: rgba(0, 0, 0, 0.25);
   font-size: 14px;
   text-align: center;
+}
+.wrap_text_aria {
+  margin: 0 32px;
+}
+.wrap_data_item {
+  padding: 6px 0;
+  border-bottom: 1px solid #d9d9d9;
+  display: flex;
+  justify-content: space-between;
+}
+.data_item {
+  display: flex;
+  justify-content: center;
+  font-size: 14px;
+}
+.data_item_child {
+  align-self: center;
+  margin-right: 8px;
+}
+.wrap_btn_done {
+}
+.btn_done {
+}
+.data_task {
+  margin-top: 12px;
+  float: left;
 }

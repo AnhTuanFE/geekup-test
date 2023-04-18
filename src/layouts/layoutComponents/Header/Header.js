@@ -35,7 +35,7 @@ function MyHeader() {
             </Link>
           </Menu.Item>
         </Menu>
-        <Divider />
+        {/* <Divider /> */}
       </Header>
     </div>
   );
