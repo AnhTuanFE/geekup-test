@@ -12,12 +12,10 @@ import useFetchUsers from "../../hooks/dataUsers/useFetchUsers";
 function Todo() {
   const [loadings, setLoadings] = useState([]);
 
-  // mylogic
   const [idUser, setIdUser] = useState(0);
   const [storeData, setStoreData] = useState([]);
   const [checkUpdata, setCheckUpdate] = useState(false);
   const [task, setTask] = useState();
-  const tempTask = useRef();
 
   const { dataUser } = useFetchUsers();
 
@@ -45,7 +43,7 @@ function Todo() {
         if (dataSort.length > 0) {
           setStoreData((prevData) => [
             ...prevData,
-            { id: dataSort[0].userId | null, taskStore: dataSort },
+            { id: dataSort[0].userId | null, listTask: dataSort },
           ]);
         }
       });
@@ -54,7 +52,7 @@ function Todo() {
   const handleLoadPage = () => {
     const itemStore = storeData.find((obj) => obj.id === idUser);
     if (itemStore?.id === idUser) {
-      setTask(itemStore.taskStore);
+      setTask(itemStore.listTask);
     } else {
       hanldeGetData();
     }
@@ -62,7 +60,7 @@ function Todo() {
 
   useEffect(() => {
     handleLoadPage();
-  }, [idUser, checkUpdata, tempTask.current]);
+  }, [idUser, checkUpdata]);
 
   const handleMarkDone = (taskId) => {
     const url = ` https://jsonplaceholder.typicode.com/todos/${taskId}`;
@@ -79,14 +77,12 @@ function Todo() {
     })
       .then((response) => response.json())
       .then((json) => {
-        const indexTaskToDelete = tempTask.current?.findIndex(
-          (item) => item.id === taskId
-        );
+        const indexTaskToDelete = task?.findIndex((item) => item.id === taskId);
         if (indexTaskToDelete !== -1) {
           task.splice(indexTaskToDelete, 1, json);
           setCheckUpdate(!checkUpdata);
           const dataSort = task.sort((a, b) => a.completed - b.completed);
-          task = dataSort;
+          setTask(dataSort);
         }
       })
       .catch((error) => console.error("Error:", error));
@@ -177,11 +173,9 @@ function Todo() {
         /20 tasks
       </div>
 
-      <div>
-        <Space>
+      {/* <Space>
           <MenuOutlined />
-        </Space>
-      </div>
+        </Space> */}
     </div>
   );
 }

@@ -17,7 +17,6 @@ export default function useFetchUsers() {
         }
         setDataUser(user);
       });
-    // .then((data) => setListUser(data));
   }, []);
 
   return {
