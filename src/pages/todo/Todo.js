@@ -15,9 +15,11 @@ function Todo() {
   // mylogic
   const [idUser, setIdUser] = useState(0);
   const [storeData, setStoreData] = useState([]);
+  const [checkUpdata, setCheckUpdate] = useState(false);
+  const [task, setTask] = useState();
+  const tempTask = useRef();
 
   const { dataUser } = useFetchUsers();
-  const tempTask = useRef();
 
   const enterLoading = (index) => {
     setLoadings((prevLoadings) => {
@@ -25,7 +27,6 @@ function Todo() {
       newLoadings[index] = true;
       return newLoadings;
     });
-
     setTimeout(() => {
       setLoadings((prevLoadings) => {
         const newLoadings = [...prevLoadings];
@@ -40,7 +41,7 @@ function Todo() {
       .then((res) => res.json())
       .then((data) => {
         const dataSort = data.sort((a, b) => a.completed - b.completed);
-        tempTask.current = dataSort;
+        setTask(dataSort);
         if (dataSort.length > 0) {
           setStoreData((prevData) => [
             ...prevData,
@@ -49,20 +50,20 @@ function Todo() {
         }
       });
   };
-  useEffect(() => {
-    const itemStore = storeData.find((obj) => obj.id == idUser);
-    if (itemStore?.id == idUser) {
-      tempTask.current = itemStore.taskStore;
-      return;
+
+  const handleLoadPage = () => {
+    const itemStore = storeData.find((obj) => obj.id === idUser);
+    if (itemStore?.id === idUser) {
+      setTask(itemStore.taskStore);
     } else {
       hanldeGetData();
     }
-  }, [idUser]);
+  };
 
-  console.log("storeData = ", storeData);
-  console.log("tempTask.current = ", tempTask.current);
+  useEffect(() => {
+    handleLoadPage();
+  }, [idUser, checkUpdata, tempTask.current]);
 
-  // button
   const handleMarkDone = (taskId) => {
     const url = ` https://jsonplaceholder.typicode.com/todos/${taskId}`;
     const requestBody = JSON.stringify({
@@ -77,7 +78,17 @@ function Todo() {
       },
     })
       .then((response) => response.json())
-      .then((json) => console.log(json))
+      .then((json) => {
+        const indexTaskToDelete = tempTask.current?.findIndex(
+          (item) => item.id === taskId
+        );
+        if (indexTaskToDelete !== -1) {
+          task.splice(indexTaskToDelete, 1, json);
+          setCheckUpdate(!checkUpdata);
+          const dataSort = task.sort((a, b) => a.completed - b.completed);
+          task = dataSort;
+        }
+      })
       .catch((error) => console.error("Error:", error));
   };
 
@@ -94,13 +105,10 @@ function Todo() {
           showSearch
           optionFilterProp="children"
           onChange={(input, option) => {
-            // console.log("option id = ", option.id);
             setIdUser(Number(option.id));
           }}
+          // onClick={handleLoadPage}
           // onSearch={onSearch}
-          // filterOption={(input, option) =>
-          //   (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
-          // }
           options={dataUser}
           className={clsx(styles.select)}
         />
@@ -114,7 +122,7 @@ function Todo() {
 
       <div className={clsx(styles.wrap_data_user)}>
         <div className={clsx(styles.data_user)}>
-          {tempTask.current?.length === 0 && (
+          {task?.length === 0 && (
             <div>
               <div>
                 <div className={clsx(styles.title_nodata)}>No data</div>
@@ -123,7 +131,7 @@ function Todo() {
           )}
           <div className={clsx(styles.wrap_text_aria)}>
             <ul>
-              {tempTask.current?.map((item) => {
+              {task?.map((item) => {
                 return (
                   <li className={clsx(styles.wrap_data_item)} key={item.id}>
                     <span className={clsx(styles.data_item)}>
@@ -148,8 +156,8 @@ function Todo() {
                         <Button
                           className={clsx(styles.btn_done)}
                           loading={loadings[item.id]}
-                          // onClick={() => enterLoading(item.id)}
                           onClick={() => {
+                            enterLoading(item.id);
                             handleMarkDone(item.id);
                           }}
                         >
@@ -160,26 +168,18 @@ function Todo() {
                   </li>
                 );
               })}
-
-              {/*  */}
             </ul>
           </div>
         </div>
       </div>
-      <div className={clsx(styles.data_task)}>Done 9/20 tasks</div>
+      <div className={clsx(styles.data_task)}>
+        Done {task?.filter((item) => item.completed === true).length}
+        /20 tasks
+      </div>
 
       <div>
         <Space>
-          <CheckCircleTwoTone twoToneColor="#52c41a" />
-          <MinusSquareTwoTone twoToneColor="orange" />
           <MenuOutlined />
-          <Button
-            type="primary"
-            loading={loadings[0]}
-            onClick={() => enterLoading(0)}
-          >
-            Click me!
-          </Button>
         </Space>
       </div>
     </div>
@@ -187,35 +187,3 @@ function Todo() {
 }
 
 export default Todo;
-
-{
-  /* <li className={clsx(styles.wrap_data_item)}>
-                <span className={clsx(styles.data_item)}>
-                  <CheckCircleTwoTone
-                    className={clsx(styles.data_item_child)}
-                    twoToneColor="#52c41a"
-                  />
-                  <p className={clsx(styles.data_item_child)}> Đã hoàn thành</p>
-                </span>
-              </li>
-              <li className={clsx(styles.wrap_data_item)}>
-                <span className={clsx(styles.data_item)}>
-                  <MinusSquareTwoTone
-                    twoToneColor="orange"
-                    className={clsx(styles.data_item_child)}
-                  />
-                  <p className={clsx(styles.data_item_child)}>
-                    Chưa hoàn thành
-                  </p>
-                </span>
-                <div className={clsx(styles.wrap_btn_done)}>
-                  <Button
-                    className={clsx(styles.btn_done)}
-                    loading={loadings[0]}
-                    onClick={() => enterLoading(0)}
-                  >
-                    Mark done
-                  </Button>
-                </div>
-              </li> */
-}
