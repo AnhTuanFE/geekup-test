@@ -126,7 +126,6 @@ function Todo() {
       </div>
 
       <div className={clsx(styles.wrap_data_user)}>
-        {/*  */}
         {isLoadingFetchTasks ? <Spin /> : null}
         <div className={clsx(styles.data_user)}>
           {task?.length === 0 && (
@@ -178,8 +177,6 @@ function Todo() {
             </ul>
           </div>
         </div>
-
-        {/*  */}
       </div>
       <div className={clsx(styles.data_task)}>
         Done {task?.filter((item) => item.completed === true).length}/
