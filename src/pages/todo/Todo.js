@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import clsx from "clsx";
 import { Divider, Select, Space, Button } from "antd";
 import {
@@ -11,11 +11,13 @@ import useFetchUsers from "../../hooks/dataUsers/useFetchUsers";
 
 function Todo() {
   const [loadings, setLoadings] = useState([]);
+
   // mylogic
   const [idUser, setIdUser] = useState(0);
-  const [tasks, setTask] = useState([]);
+  const [storeData, setStoreData] = useState([]);
 
   const { dataUser } = useFetchUsers();
+  const tempTask = useRef();
 
   const enterLoading = (index) => {
     setLoadings((prevLoadings) => {
@@ -33,19 +35,36 @@ function Todo() {
     }, 3000);
   };
 
-  useEffect(() => {
+  const hanldeGetData = () => {
     fetch(`https://jsonplaceholder.typicode.com/users/${idUser}/todos`)
       .then((res) => res.json())
       .then((data) => {
         const dataSort = data.sort((a, b) => a.completed - b.completed);
-        setTask(dataSort);
+        tempTask.current = dataSort;
+        if (dataSort.length > 0) {
+          setStoreData((prevData) => [
+            ...prevData,
+            { id: dataSort[0].userId | null, taskStore: dataSort },
+          ]);
+        }
       });
+  };
+  useEffect(() => {
+    const itemStore = storeData.find((obj) => obj.id == idUser);
+    if (itemStore?.id == idUser) {
+      tempTask.current = itemStore.taskStore;
+      return;
+    } else {
+      hanldeGetData();
+    }
   }, [idUser]);
-  console.log("tasks = ", tasks);
 
-  const handleMarkDone = () => {
-    const taskId = 22;
-    const url = `https://jsonplaceholder.typicode.com/users/${idUser}/todos/id=${taskId}`;
+  console.log("storeData = ", storeData);
+  console.log("tempTask.current = ", tempTask.current);
+
+  // button
+  const handleMarkDone = (taskId) => {
+    const url = ` https://jsonplaceholder.typicode.com/todos/${taskId}`;
     const requestBody = JSON.stringify({
       completed: true,
     });
@@ -75,7 +94,7 @@ function Todo() {
           showSearch
           optionFilterProp="children"
           onChange={(input, option) => {
-            console.log("option id = ", option.id);
+            // console.log("option id = ", option.id);
             setIdUser(Number(option.id));
           }}
           // onSearch={onSearch}
@@ -95,7 +114,7 @@ function Todo() {
 
       <div className={clsx(styles.wrap_data_user)}>
         <div className={clsx(styles.data_user)}>
-          {tasks.length === 0 && (
+          {tempTask.current?.length === 0 && (
             <div>
               <div>
                 <div className={clsx(styles.title_nodata)}>No data</div>
@@ -104,7 +123,7 @@ function Todo() {
           )}
           <div className={clsx(styles.wrap_text_aria)}>
             <ul>
-              {tasks?.map((item) => {
+              {tempTask.current?.map((item) => {
                 return (
                   <li className={clsx(styles.wrap_data_item)} key={item.id}>
                     <span className={clsx(styles.data_item)}>
@@ -128,9 +147,11 @@ function Todo() {
                       <div className={clsx(styles.wrap_btn_done)}>
                         <Button
                           className={clsx(styles.btn_done)}
-                          // loading={loadings[0]}
-                          // onClick={() => enterLoading(0)}
-                          onClick={handleMarkDone}
+                          loading={loadings[item.id]}
+                          // onClick={() => enterLoading(item.id)}
+                          onClick={() => {
+                            handleMarkDone(item.id);
+                          }}
                         >
                           Mark done
                         </Button>
@@ -139,6 +160,8 @@ function Todo() {
                   </li>
                 );
               })}
+
+              {/*  */}
             </ul>
           </div>
         </div>
