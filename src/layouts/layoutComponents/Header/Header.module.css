@@ -1,22 +1,12 @@
 .wrap_header {
-  /* position: fixed;
-  inset-block-start: 0;
-  width: 100%;
-  z-index: 100;
-  inset-inline-end: 0;
-  height: 56px;
-  line-height: 56px; */
   font-weight: 500;
 }
 
 .header {
   background-color: white !important;
-  /* background-color: aqua !important; */
-
-  margin-inline: 16px;
+  /* margin-inline: 16px; */
   height: 56px;
   line-height: 56px;
-  /*  */
   position: fixed;
   inset-block-start: 0;
   width: 100%;

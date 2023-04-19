@@ -18,7 +18,8 @@ function MyHeader() {
           <Menu.Item className={clsx(styles.menu_item)} key="logo">
             <Link className={clsx(styles.nav_item)} to="/">
               <img
-                src="./images/logo/geekup_logo.svg"
+                // src="./images/logo/geekup_logo.svg"
+                src="https://geekup.vn/Icons/geekup-logo-general.svg"
                 alt="LOGO"
                 className={clsx(styles.logo_item)}
               />

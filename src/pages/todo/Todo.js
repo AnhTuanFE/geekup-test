@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import clsx from "clsx";
-import { Divider, Select, Space, Button } from "antd";
+import { Divider, Select, Space, Button, Spin } from "antd";
 import {
   CheckCircleTwoTone,
   MinusSquareTwoTone,
@@ -16,6 +16,7 @@ function Todo() {
   const [storeData, setStoreData] = useState([]);
   const [checkUpdata, setCheckUpdate] = useState(false);
   const [task, setTask] = useState();
+  const [isLoadingFetchTasks, setIsLoadingFetchTasks] = useState(false);
 
   const { dataUser } = useFetchUsers();
 
@@ -35,6 +36,7 @@ function Todo() {
   };
 
   const hanldeGetData = () => {
+    setIsLoadingFetchTasks(true);
     fetch(`https://jsonplaceholder.typicode.com/users/${idUser}/todos`)
       .then((res) => res.json())
       .then((data) => {
@@ -46,6 +48,9 @@ function Todo() {
             { id: dataSort[0].userId | null, listTask: dataSort },
           ]);
         }
+      })
+      .finally(() => {
+        setIsLoadingFetchTasks(false);
       });
   };
 
@@ -111,12 +116,18 @@ function Todo() {
       </div>
 
       <div className={clsx(styles.title)}>
-        <Divider orientation="left" orientationMargin="0">
+        <Divider
+          className={clsx(styles.task_title)}
+          orientation="left"
+          orientationMargin="0"
+        >
           Task
         </Divider>
       </div>
 
       <div className={clsx(styles.wrap_data_user)}>
+        {/*  */}
+        {isLoadingFetchTasks ? <Spin /> : null}
         <div className={clsx(styles.data_user)}>
           {task?.length === 0 && (
             <div>
@@ -167,10 +178,12 @@ function Todo() {
             </ul>
           </div>
         </div>
+
+        {/*  */}
       </div>
       <div className={clsx(styles.data_task)}>
-        Done {task?.filter((item) => item.completed === true).length}
-        /20 tasks
+        Done {task?.filter((item) => item.completed === true).length}/
+        {task?.length} tasks
       </div>
 
       {/* <Space>
