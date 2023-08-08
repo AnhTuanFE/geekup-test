@@ -1,9 +1,5 @@
 function Home() {
-  return (
-    <div>
-      <h1>Home pages</h1>
-    </div>
-  );
+    return <div className="min-h-[90vh]"></div>;
 }
 
 export default Home;
